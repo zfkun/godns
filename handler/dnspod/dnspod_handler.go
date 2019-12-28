@@ -20,11 +20,17 @@ import (
 // Handler struct definition
 type Handler struct {
 	Configuration *godns.Settings
+	API           string
 }
 
 // SetConfiguration pass dns settings and store it to handler instance
 func (handler *Handler) SetConfiguration(conf *godns.Settings) {
 	handler.Configuration = conf
+	if conf.Api != "" {
+		handler.API = conf.Api
+	} else {
+		handler.API = "https://dnsapi.cn"
+	}
 }
 
 // DomainLoop the main logic loop
@@ -246,7 +252,7 @@ func (handler *Handler) PostData(url string, content url.Values) (string, error)
 	}
 
 	values := handler.GenerateHeader(content)
-	req, _ := http.NewRequest("POST", "https://dnsapi.cn"+url, strings.NewReader(values.Encode()))
+	req, _ := http.NewRequest("POST", handler.API+url, strings.NewReader(values.Encode()))
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", fmt.Sprintf("GoDNS/0.1 (%s)", ""))

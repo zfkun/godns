@@ -22,6 +22,7 @@ import (
 type AliDNS struct {
 	AccessKeyID     string
 	AccessKeySecret string
+	BaseUrl         string
 }
 
 var (
@@ -83,9 +84,16 @@ func NewAliDNS(key, secret string) *AliDNS {
 		instance = &AliDNS{
 			AccessKeyID:     key,
 			AccessKeySecret: secret,
+			BaseUrl:         baseURL,
 		}
 	})
 	return instance
+}
+
+func (d *AliDNS) SetBaseUrl(s string) {
+	if s != "" {
+		d.BaseUrl = s
+	}
 }
 
 // GetDomainRecords gets all the doamin records according to input subdomain key
@@ -163,5 +171,5 @@ func (d *AliDNS) genRequestURL(parms map[string]string) string {
 		return ""
 	}
 	sign := base64.StdEncoding.EncodeToString(mac.Sum(nil))
-	return fmt.Sprintf("%s?%s&Signature=%s", baseURL, path, url.QueryEscape(sign))
+	return fmt.Sprintf("%s?%s&Signature=%s", d.BaseUrl, path, url.QueryEscape(sign))
 }

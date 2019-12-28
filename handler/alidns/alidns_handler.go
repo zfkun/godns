@@ -12,11 +12,15 @@ import (
 // Handler struct
 type Handler struct {
 	Configuration *godns.Settings
+	API           string
 }
 
 // SetConfiguration pass dns settings and store it to handler instance
 func (handler *Handler) SetConfiguration(conf *godns.Settings) {
 	handler.Configuration = conf
+	if conf.Api != "" {
+		handler.API = conf.Api
+	}
 }
 
 // DomainLoop the main logic loop
@@ -30,6 +34,9 @@ func (handler *Handler) DomainLoop(domain *godns.Domain, panicChan chan<- godns.
 
 	var lastIP string
 	aliDNS := NewAliDNS(handler.Configuration.Email, handler.Configuration.Password)
+	if handler.API != "" {
+		aliDNS.SetBaseUrl(handler.API)
+	}
 
 	for {
 		currentIP, err := godns.GetCurrentIP(handler.Configuration)

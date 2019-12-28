@@ -18,11 +18,17 @@ var (
 // Handler struct
 type Handler struct {
 	Configuration *godns.Settings
+	API           string
 }
 
 // SetConfiguration pass dns settings and store it to handler instance
 func (handler *Handler) SetConfiguration(conf *godns.Settings) {
 	handler.Configuration = conf
+	if conf.Api != "" {
+		handler.API = conf.Api
+	} else {
+		handler.API = DuckUrl
+	}
 }
 
 // DomainLoop the main logic loop
@@ -54,7 +60,7 @@ func (handler *Handler) DomainLoop(domain *godns.Domain, panicChan chan<- godns.
 
 			for _, subDomain := range domain.SubDomains {
 				// update IP with HTTP GET request
-				resp, err := client.Get(fmt.Sprintf(DuckUrl, subDomain, handler.Configuration.LoginToken, currentIP))
+				resp, err := client.Get(fmt.Sprintf(handler.API, subDomain, handler.Configuration.LoginToken, currentIP))
 				if err != nil {
 					// handle error
 					log.Print("Failed to update sub domain:", subDomain)

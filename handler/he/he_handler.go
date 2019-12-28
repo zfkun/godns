@@ -21,11 +21,17 @@ var (
 // Handler struct
 type Handler struct {
 	Configuration *godns.Settings
+	API           string
 }
 
 // SetConfiguration pass dns settings and store it to handler instance
 func (handler *Handler) SetConfiguration(conf *godns.Settings) {
 	handler.Configuration = conf
+	if conf.Api != "" {
+		handler.API = conf.Api
+	} else {
+		handler.API = HEUrl
+	}
 }
 
 // DomainLoop the main logic loop
@@ -82,7 +88,7 @@ func (handler *Handler) UpdateIP(domain, subDomain, currentIP string) {
 
 	client := godns.GetHttpClient(handler.Configuration)
 
-	req, _ := http.NewRequest("POST", HEUrl, strings.NewReader(values.Encode()))
+	req, _ := http.NewRequest("POST", handler.API, strings.NewReader(values.Encode()))
 	resp, err := client.Do(req)
 
 	if err != nil {

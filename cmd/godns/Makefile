@@ -1,8 +1,11 @@
+VERSION=1.9.3.zfkun
 # Binary name
 BINARY=godns
 # Builds the project
 build:
 		GO111MODULE=on go build -o ${BINARY} -ldflags "-X main.Version=${VERSION}"
+build-linux:
+		CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o ${BINARY} -ldflags "-s -w -X main.Version=${VERSION}"
 # Installs our project: copies binaries
 install:
 		GO111MODULE=on go install

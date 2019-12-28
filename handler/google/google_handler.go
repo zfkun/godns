@@ -21,11 +21,17 @@ var (
 // Handler struct
 type Handler struct {
 	Configuration *godns.Settings
+	API           string
 }
 
 // SetConfiguration pass dns settings and store it to handler instance
 func (handler *Handler) SetConfiguration(conf *godns.Settings) {
 	handler.Configuration = conf
+	if conf.Api != "" {
+		handler.API = conf.Api
+	} else {
+		handler.API = GoogleUrl
+	}
 }
 
 // DomainLoop the main logic loop
@@ -48,7 +54,7 @@ func (handler *Handler) DomainLoop(domain *godns.Domain, panicChan chan<- godns.
 		}
 		log.Println("currentIP is:", currentIP)
 
-		//check against locally cached IP, if no change, skip update
+		// check against locally cached IP, if no change, skip update
 		if currentIP == lastIP {
 			log.Printf("IP is the same as cached one. Skip update.\n")
 		} else {
@@ -81,7 +87,7 @@ func (handler *Handler) UpdateIP(domain, subDomain, currentIP string) {
 	values.Add("myip", currentIP)
 
 	client := godns.GetHttpClient(handler.Configuration)
-	req, _ := http.NewRequest("POST", GoogleUrl, strings.NewReader(values.Encode()))
+	req, _ := http.NewRequest("POST", handler.API+"/nic/update", strings.NewReader(values.Encode()))
 	req.SetBasicAuth(handler.Configuration.Email, handler.Configuration.Password)
 
 	if handler.Configuration.UserAgent != "" {

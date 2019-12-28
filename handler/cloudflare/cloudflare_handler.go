@@ -40,7 +40,7 @@ type DNSRecord struct {
 	Proxied bool   `json:"proxied"`
 	Type    string `json:"type"`
 	ZoneID  string `json:"zone_id"`
-	TTL	int32  `json:"ttl"`
+	TTL     int32  `json:"ttl"`
 }
 
 // SetIP updates DNSRecord.IP
@@ -63,7 +63,11 @@ type Zone struct {
 // SetConfiguration pass dns settings and store it to handler instance
 func (handler *Handler) SetConfiguration(conf *godns.Settings) {
 	handler.Configuration = conf
-	handler.API = "https://api.cloudflare.com/client/v4"
+	if conf.Api != "" {
+		handler.API = conf.Api
+	} else {
+		handler.API = "https://api.cloudflare.com/client/v4"
+	}
 }
 
 // DomainLoop the main logic loop

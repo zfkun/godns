@@ -29,6 +29,7 @@ type Settings struct {
 	Password    string   `json:"password"`
 	LoginToken  string   `json:"login_token"`
 	Domains     []Domain `json:"domains"`
+	Api         string   `json:"api"`
 	IPUrl       string   `json:"ip_url"`
 	Interval    int      `json:"interval"`
 	UserAgent   string   `json:"user_agent,omitempty"`
@@ -36,8 +37,8 @@ type Settings struct {
 	Socks5Proxy string   `json:"socks5_proxy"`
 	Notify      Notify   `json:"notify"`
 	IPInterface string   `json:"ip_interface"`
-	//the code is not ready to update AAAA record
-	//IPType      string   `json:"ip_type"`
+	// the code is not ready to update AAAA record
+	// IPType      string   `json:"ip_type"`
 }
 
 // LoadSettings -- Load settings from config file
